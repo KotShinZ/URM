@@ -49,7 +49,7 @@ class URMBlock(nn.Module):
             num_key_value_heads=config.num_heads,
             causal=False,
         )
-        self.mlp = ConvSwiGLUV2(
+        self.mlp = ConvSwiGLU(
             hidden_size=config.hidden_size,
             expansion=config.expansion,
         )
