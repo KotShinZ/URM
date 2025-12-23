@@ -1,0 +1,72 @@
+{
+  "name": "ClaudeCode Container",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "args": {
+      "TZ": "${localEnv:TZ:Asia/Tokyo}"
+    },
+    "context": "."
+  },
+  //"image": "mcr.microsoft.com/devcontainers/python:3.11",
+  "remoteUser": "root",
+  //"workspaceFolder": "/home/user",
+  //"workspaceMount": "type=bind,source=${localWorkspaceFolder},target=/home/user",
+  "updateRemoteUserUID": true,
+  "postCreateCommand": "postCreateCommand.sh",
+  "runArgs": ["--gpus", "\"device=0\"", "--shm-size", "96gb"],
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "ms-python.python",
+        "ms-azuretools.vscode-docker",
+        "ms-python.vscode-pylance",
+        "ms-toolsai.jupyter",
+        "ms-azuretools.vscode-docker",
+        "gxl.git-graph-3",
+        "codezombiech.gitignore",
+        "coolcline.coolcline",
+        "ms-python.black-formatter",
+        "shd101wyy.markdown-preview-enhanced"
+      ],
+      "settings": {
+        "editor.formatOnSave": false,
+        "[python]": {
+          "editor.defaultFormatter": "ms-python.black-formatter"
+        },
+        "black-formatter.args": [
+          "--line-length=1000" // この行を追加
+        ]
+        // "editor.defaultFormatter": "esbenp.prettier-vscode",
+        // "editor.codeActionsOnSave": {
+        // "source.fixAll.eslint": "explicit"
+        // },
+        // "terminal.integrated.defaultProfile.linux": "zsh",
+        // "terminal.integrated.profiles.linux": {
+        //   "bash": {
+        //     "path": "bash",
+        //     "icon": "terminal-bash"
+        //   },
+        //   "zsh": {
+        //     "path": "zsh"
+        //   }
+        // }
+      }
+    }
+  },
+
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": {},
+    "ghcr.io/anthropics/devcontainer-features/claude-code:1.0": {},
+    //"ghcr.io/devcontainers/features/docker-in-docker:2": {}
+    "ghcr.io/devcontainers/features/python": {}
+  },
+  //"forwardPorts": [8080, 3000, 8000]
+  "appPort": ["8002:8002", "8082:8082"]
+  // "containerEnv": {
+  //   "HTTP_PROXY": "http://proxy11.omu.ac.jp:8080",
+  //   "HTTPS_PROXY": "http://proxy11.omu.ac.jp:8080",
+  //   "NO_PROXY": "localhost,127.0.0.0/8"
+  // }
+}
