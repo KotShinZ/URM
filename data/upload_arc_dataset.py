@@ -183,10 +183,10 @@ def load_puzzles_arcagi(config: DataProcessConfig):
     total_puzzles = 0
     for subset_name in config.subsets:
         # Load all puzzles in this subset
-        with open(f"{config.input_file_prefix}_{subset_name}_challenges.json", "r") as f:
+        with open(f"{config.input_file_prefix}_{subset_name}-challenges.json", "r") as f:
             puzzles = json.load(f)
 
-        sols_filename = f"{config.input_file_prefix}_{subset_name}_solutions.json"
+        sols_filename = f"{config.input_file_prefix}_{subset_name}-solutions.json"
         if os.path.isfile(sols_filename):
             with open(sols_filename, "r") as f:
                 sols = json.load(f)
