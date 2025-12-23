@@ -33,6 +33,24 @@ python -m data.build_arc_dataset \
 
 # Sudoku
 python data/build_sudoku_dataset.py --output-dir data/sudoku-extreme-1k-aug-1000  --subsample-size 1000 --num-aug 1000
+
+# upload ARC-AGI-1
+export HF_TOKEN=YOUR_HF_TOKEN
+python -m data.upload_arc_dataset \
+  --input-file-prefix kaggle/combined/arc-agi \
+  --subsets training evaluation \
+  --test-set-name evaluation \
+  --hf-repo-id "your-username/arc-agi-augmented" \
+  --hf-token $HF_TOKEN
+
+# upload ARC-AGI-2
+export HF_TOKEN=YOUR_HF_TOKEN
+python -m data.upload_arc_dataset \
+  --input-file-prefix kaggle/combined/arc-agi \
+  --subsets training2 evaluation2 \
+  --test-set-name evaluation2 \
+  --hf-repo-id "your-username/arc-agi-augmented" \
+  --hf-token $HF_TOKEN
 ```
 
 ## Reproducing ARC-AGI 1 Score
