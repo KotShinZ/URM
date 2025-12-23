@@ -46,7 +46,8 @@ python -m data.upload_arc_dataset \
   --subsets training evaluation \
   --test-set-name evaluation \
   --hf-repo-id "your-username/arc-agi-augmented" \
-  --hf-token $HF_TOKEN
+  --hf-token $HF_TOKEN \
+  --num-aug 100
 
 # upload ARC-AGI-2
 export HF_TOKEN=YOUR_HF_TOKEN
