@@ -7,7 +7,9 @@ Universal transformers (UTs) have been widely used for complex reasoning tasks s
 
 ## Installation
 ```bash
-pip install -r requirements.txt
+uv venv
+uv pip install -r requirements.txt
+uv pip install flash-attn --no-build-isolation 
 ```
 
 ## Login Wandb
