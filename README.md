@@ -4,6 +4,8 @@
 
 Universal transformers (UTs) have been widely used for complex reasoning tasks such as ARC-AGI and Sudoku, yet the specific sources of their performance gains remain underexplored. In this work, we systematically analyze UTs variants and show that improvements on ARC-AGI primarily arise from the recurrent inductive bias and strong nonlinear components of Transformer, rather than from elaborate architectural designs. Motivated by this finding, we propose the Universal Reasoning Model (URM), which enhances the UT with short convolution and truncated backpropagation. Our approach substantially improves reasoning performance, achieving state-of-the-art 53.8% pass@1 on ARC-AGI 1 and 16.0% pass@1 on ARC-AGI 2.
 
+## ⚠️ For Question Regarding Sudoku Score
+The reported score of 87.4% in the TRM paper is obtained using an MLP model, which we believe it is completely different from the TRM architecture in ARC-AGI task. Therefore, **_for fair comparison_**, when reproducing the results, we unified the architectures for ARC-AGI 1, ARC-AGI 2, and Sudoku to be exactly the same, which means **the architecture used to reproduce Sudoku is the same TRM architecture used to run ARC-AGI**.
 
 ## Installation
 ```bash
