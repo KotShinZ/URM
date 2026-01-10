@@ -870,8 +870,9 @@ def launch(hydra_config: DictConfig):
         )
         # Evaluators
         evaluators = create_evaluators(config, eval_metadata)
-    except FileNotFoundError:
+    except FileNotFoundError as e:
         print(f"eval metadata FileNotFoundError")
+        print(e)
         eval_loader = eval_metadata = None
         evaluators = []
 
@@ -900,6 +901,8 @@ def launch(hydra_config: DictConfig):
         )
         wandb.log({"num_params": sum(x.numel() for x in train_state.model.parameters())}, step=0)
         save_code_and_config(config)
+        
+    print(train_state.model)
 
     # Training Loop
     for _iter_id in range(total_iters):

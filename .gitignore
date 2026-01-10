@@ -4,3 +4,6 @@ outputs/**
 wandb/**
 **/__pycache__/*
 checkpoints/**
+data/sudoku-extreme-1k-aug-1000/*
+kaggle/combined/arc-agi_training-challenges copy.json
+.devcontainer/devcontainer.json

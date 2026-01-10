@@ -153,8 +153,8 @@ def convert_single_arc_puzzle(results: dict, name: str, puzzle: dict, aug_count:
             if len(group) >= aug_count + 1:
                 break
             
-        if len(group) < aug_count + 1:
-            print (f"[Puzzle {name}] augmentation not full, only {len(group)}")
+        # if len(group) < aug_count + 1:
+        #     print (f"[Puzzle {name}] augmentation not full, only {len(group)}")
 
     # Append
     for dest in dests:
@@ -181,11 +181,13 @@ def load_puzzles_arcagi(config: DataProcessConfig):
         # Load all puzzles in this subset
         with open(f"{config.input_file_prefix}_{subset_name}-challenges.json", "r") as f:
             puzzles = json.load(f)
+            print (f"Loaded {len(puzzles)} puzzles from {subset_name} challenges")
 
         sols_filename = f"{config.input_file_prefix}_{subset_name}-solutions.json"
         if os.path.isfile(sols_filename):
             with open(sols_filename, "r") as f:
                 sols = json.load(f)
+                print (f"Loaded {len(sols)} solutions from {subset_name} solutions")
                 
                 for puzzle_id in puzzles.keys():
                     for idx, sol_grid in enumerate(sols[puzzle_id]):
@@ -200,6 +202,7 @@ def load_puzzles_arcagi(config: DataProcessConfig):
 
         # Shuffle puzzles
         puzzles = list(puzzles.items())
+        print (f"Shuffling {len(puzzles)} puzzles...")
         np.random.shuffle(puzzles)
         
         # Assign by fraction
@@ -220,6 +223,9 @@ def load_puzzles_arcagi(config: DataProcessConfig):
             total_puzzles += 1
 
     print (f"Total puzzles: {total_puzzles}")
+    print (f"Total test puzzles: {len(test_puzzles)}")
+    print (f"Total train puzzles: {total_puzzles - len(test_puzzles)}")
+    print("results keys:", results.keys())
     return results, test_puzzles
 
 
@@ -232,9 +238,15 @@ def convert_dataset(config: DataProcessConfig):
     # Map global puzzle identifiers
     num_identifiers = 1  # 0 is blank
     identifier_map = {}
+    print("Mapping puzzle IDs...")
     for split_name, split in data.items():
+        print("split: ", split_name)
+        print("subset_len: ", len(split))
         for subset_name, subset in split.items():
+            print(" subset: ", subset_name)
+            print("  group_len: ", len(subset))
             for group in subset:
+                print(len(group),end=",")
                 for puzzle in group:
                     if puzzle.id not in identifier_map:
                         identifier_map[puzzle.id] = num_identifiers
@@ -244,6 +256,7 @@ def convert_dataset(config: DataProcessConfig):
 
     # Save
     for split_name, split in data.items():
+        print("split: ", split_name)
         os.makedirs(os.path.join(config.output_dir, split_name), exist_ok=True)
         
         # Translational augmentations
@@ -310,10 +323,15 @@ def convert_dataset(config: DataProcessConfig):
             mean_puzzle_examples=total_examples / total_puzzles,
             sets=list(split.keys())
         )
+        print(f"  Total puzzles: {total_puzzles}")
+        print(f"  Total examples: {total_examples}")
+        print(f"  Total groups: {total_groups}")
+        print(f"  Mean examples per puzzle: {metadata.mean_puzzle_examples:.2f}")
 
         # Save metadata as JSON.
         with open(os.path.join(config.output_dir, split_name, "dataset.json"), "w") as f:
             json.dump(metadata.model_dump(), f)
+            print(f"  Saved metadata to {f.name}")
             
     # Save IDs mapping
     with open(os.path.join(config.output_dir, "identifiers.json"), "w") as f:
