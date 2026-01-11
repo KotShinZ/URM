@@ -24,3 +24,12 @@ forward_dtype: bfloat16
 mlp_t: False # use mlp on L instead of transformer
 puzzle_emb_len: 16 # if non-zero, its specified to this value
 no_ACT_continue: True # No continue ACT loss, only use the sigmoid of the halt which makes much more sense
+
+profile: true
+
+eval_interval: 1000
+checkpoint_every_eval: True
+checkpoint_path: .cache/checkpoint
+
+ema: True
+ema_rate: 0.999

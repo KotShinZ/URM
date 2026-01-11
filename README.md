@@ -62,7 +62,6 @@ python -m data.build_arc_dataset \
 python -m data.build_sudoku_dataset \
   --output-dir data/sudoku-extreme-1k-aug-1000  \
   --subsample-size 1000 \
-  --num-aug 1000
 
 # upload ARC-AGI-1
 export HF_TOKEN=YOUR_HF_TOKEN

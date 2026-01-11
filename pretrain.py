@@ -18,7 +18,7 @@ import wandb
 import coolname
 import hydra
 import pydantic
-from omegaconf import DictConfig
+from omegaconf import DictConfig, OmegaConf
 #from adam_atan2 import AdamATan2
 from adam_atan2_pytorch import AdamAtan2
 from models.muon import Muon
@@ -156,9 +156,11 @@ def create_dataloader(config: PretrainConfig, split: str, rank: int, world_size:
         ),
         split=split,
     )
+    print(f"Dataset {split} has {dataset.metadata.total_groups} groups.")
     dataloader = DataLoader(
         dataset, batch_size=None, num_workers=1, prefetch_factor=8, pin_memory=True, persistent_workers=True
     )
+    print(f"Created dataloader for split '{split}'.")
     return dataloader, dataset.metadata
 
 
@@ -510,7 +512,10 @@ def compute_lr(base_lr: float, config: PretrainConfig, train_state: TrainState):
 def create_evaluators(config: PretrainConfig, eval_metadata: PuzzleDatasetMetadata) -> List[Any]:
     # Initialize evaluators
     evaluators = []
+    print("creating evaluators...")
+    print(config.evaluators)
     for cfg in config.evaluators:
+        print(f"Creating evaluator: {cfg.name}")
         cls = load_model_class(cfg.name, "evaluators.")(
             data_path=config.data_path, eval_metadata=eval_metadata, **cfg.__pydantic_extra__
         )  # type: ignore
@@ -637,7 +642,11 @@ def evaluate(
         carry = None
         processed_batches = 0
         
+        print("Starting evaluation... len(eval_loader) =", len(eval_loader))
         for set_name, batch, global_batch_size in eval_loader:
+            if processed_batches > 50:
+                break
+            
             processed_batches += 1
             if rank == 0:
                 print(f"Processing batch {processed_batches}: {set_name}")
@@ -803,7 +812,8 @@ def _prefix_metrics(metrics: Any, prefix: str):
 def load_synced_config(hydra_config: DictConfig, rank: int, world_size: int) -> PretrainConfig:
     objects = [None]
     if rank == 0:
-        config = PretrainConfig(**hydra_config)  # type: ignore
+        config_dict = OmegaConf.to_container(hydra_config, resolve=True)
+        config = PretrainConfig(**config_dict)
         config.project_name = "arcagi"
 
         objects = [config]
@@ -869,6 +879,8 @@ def launch(hydra_config: DictConfig):
             rank=RANK,
             world_size=WORLD_SIZE,
         )
+        print("len(eval_loader) =", len(eval_loader))
+        print("eval_problem_counts =", len(eval_loader) * config.global_batch_size)
         # Evaluators
         evaluators = create_evaluators(config, eval_metadata)
     except FileNotFoundError as e:
@@ -901,9 +913,14 @@ def launch(hydra_config: DictConfig):
             settings=wandb.Settings(_disable_stats=True),
         )
         wandb.log({"num_params": sum(x.numel() for x in train_state.model.parameters())}, step=0)
-        save_code_and_config(config)
+        save_code_and_config(config, config.checkpoint_path)
         
     print(train_state.model)
+    # print parameter count
+    total_params = sum(p.numel() for p in train_state.model.parameters())
+    print(f"Total parameters: {total_params}")
+    for name, param in train_state.model.named_parameters():
+        print(f"Parameter: {name}, Shape: {param.shape}, Size: {param.numel()}")
 
     # Training Loop
     for _iter_id in range(total_iters):

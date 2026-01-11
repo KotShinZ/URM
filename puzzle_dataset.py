@@ -200,3 +200,9 @@ class PuzzleDataset(IterableDataset):
             yield from self._iter_test()
         else:
             yield from self._iter_train()
+            
+    def __len__(self):
+        # データがロードされていなければロードする
+        self._lazy_load_dataset()
+        # 全セットの合計サイズを返す
+        return sum(len(d["inputs"]) for d in self._data.values())

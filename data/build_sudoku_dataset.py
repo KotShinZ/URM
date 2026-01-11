@@ -61,6 +61,7 @@ def convert_subset(set_name: str, config: DataProcessConfig):
     # Read CSV
     inputs = []
     labels = []
+    print(f"Processing subset: {set_name}")
     
     with open(hf_hub_download(config.source_repo, f"{set_name}.csv", repo_type="dataset"), newline="") as csvfile:
         reader = csv.reader(csvfile)
@@ -83,6 +84,7 @@ def convert_subset(set_name: str, config: DataProcessConfig):
 
     # Generate dataset
     num_augments = config.num_aug if set_name == "train" else 0
+    print(f"Number of augmentations per puzzle: {num_augments}")
 
     results = {k: [] for k in ["inputs", "labels", "puzzle_identifiers", "puzzle_indices", "group_indices"]}
     puzzle_id = 0
@@ -117,6 +119,9 @@ def convert_subset(set_name: str, config: DataProcessConfig):
         
         assert np.all((arr >= 0) & (arr <= 9))
         return arr + 1
+    
+    print("puzzle_indices:", " len =", len(results["puzzle_indices"]), results["puzzle_indices"][:10], "...")
+    print("group_indices:", "len =", len(results["group_indices"]), results["group_indices"][:10], "...")
     
     results = {
         "inputs": _seq_to_numpy(results["inputs"]),
