@@ -644,7 +644,7 @@ def evaluate(
         
         print("Starting evaluation... len(eval_loader) =", len(eval_loader))
         for set_name, batch, global_batch_size in eval_loader:
-            if processed_batches > 50:
+            if processed_batches > 100:
                 break
             
             processed_batches += 1
@@ -881,6 +881,7 @@ def launch(hydra_config: DictConfig):
         )
         print("len(eval_loader) =", len(eval_loader))
         print("eval_problem_counts =", len(eval_loader) * config.global_batch_size)
+        print("eval_metadata =", eval_metadata)
         # Evaluators
         evaluators = create_evaluators(config, eval_metadata)
     except FileNotFoundError as e:
